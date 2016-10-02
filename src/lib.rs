@@ -1,5 +1,9 @@
 #![cfg_attr(use_nightly, feature(core_intrinsics, specialization))]
 
+//! Use debug printlns, without the trait bounds (using specialization to
+//! find the right impl anyway).
+//! 
+
 use std::fmt;
 
 #[cfg(use_nightly)]
@@ -8,8 +12,20 @@ use std::intrinsics::type_name;
 /// Print a message, and then each value's debug representation (if it has one)
 ///
 /// NOTE: This macro has **no** format string, only a message and a list of values.
+///
+/// # Examples
+///
+/// ```
+/// #[macro_use] extern crate debugit;
+///
+/// fn process_something<T>(x: T) {
+///     debugit!("starting with", x);
+/// }
+///
+/// # fn main() { }
+/// ```
 #[macro_export]
-macro_rules! printdebug {
+macro_rules! debugit {
     ($message:expr, $($value:expr),*) => {{
         print!("{} ", $message);
         $(
