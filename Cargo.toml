@@ -6,6 +6,7 @@ authors = ["bluss"]
 description = """Debug any value without trait bounds using specialization (Rust nightly channel)"""
 license = "Apache-2.0/MIT"
 documentation = "https://docs.rs/debugit/"
+repository = "https://github.com/bluss/debugit"
 
 build = "build.rs"
 
