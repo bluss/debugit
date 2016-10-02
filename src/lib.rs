@@ -1,12 +1,13 @@
-#![feature(core_intrinsics)]
-#![feature(specialization)]
+#![cfg_attr(use_nightly, feature(core_intrinsics, specialization))]
 
 use std::fmt;
-use std::fmt::Write;
 
+#[cfg(use_nightly)]
 use std::intrinsics::type_name;
 
 /// Print a message, and then each value's debug representation (if it has one)
+///
+/// NOTE: This macro has **no** format string, only a message and a list of values.
 #[macro_export]
 macro_rules! printdebug {
     ($message:expr, $($value:expr),*) => {{
@@ -37,6 +38,14 @@ macro_rules! printdebug {
 #[derive(Copy, Clone)]
 pub struct DebugIt<T>(pub T);
 
+#[cfg(not(use_nightly))]
+impl<T> fmt::Debug for DebugIt<T> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "<unknown>")
+    }
+}
+
+#[cfg(use_nightly)]
 impl<T> fmt::Debug for DebugIt<T> {
     default fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         unsafe {
@@ -45,6 +54,7 @@ impl<T> fmt::Debug for DebugIt<T> {
     }
 }
 
+#[cfg(use_nightly)]
 impl<T> fmt::Debug for DebugIt<T>
     where T: fmt::Debug
 {
@@ -53,18 +63,16 @@ impl<T> fmt::Debug for DebugIt<T>
     }
 }
 
-fn count_items<I>(iter: I) -> usize where I: IntoIterator {
-    let mut c = 0;
-    for elt in iter {
-        printdebug!("Counting", elt);
-        c += 1;
+#[cfg(test)]
+mod tests {
+    use ::DebugIt;
+
+    #[test]
+    fn it_works() {
+        fn debug_no_bound<T>(x: T, s: &str) {
+            assert_eq!(&format!("{:?}", DebugIt(&x)), s);
+        }
+        debug_no_bound(1, "1");
+        debug_no_bound((), "()");
     }
-    c
-}
-
-pub struct NoDebug<T>(pub T);
-
-fn main() {
-    let n = count_items(0..10);
-    let n = count_items((0..10).map(|x| NoDebug(x)));
 }
