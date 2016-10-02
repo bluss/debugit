@@ -5,9 +5,6 @@ matrix:
     - rust: stable
       env:
         - NOTEST=1
-    - rust: beta
-      env:
-        - NOTEST=1
     - rust: nightly
 branches:
   only:
