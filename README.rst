@@ -2,8 +2,8 @@
 debugit
 =======
 
-Debug anything (with Rust nightly compiler), without needing trait bounds.
-Using specialization.
+Debug-print any value without trait bounds using specialization (Rust nightly
+channel).
 
 Falls back to a useless, but still compiling version on the stable channel.
 
