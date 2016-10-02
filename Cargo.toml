@@ -1,6 +1,10 @@
 [package]
 name = "debugit"
 version = "0.1.0"
-authors = ["bluss <bluss@users.noreply.github.com>"]
+authors = ["bluss"]
+
+description = """Debug any value without trait bounds using specialization (Rust nightly channel)"""
+license = "Apache-2.0/MIT"
+documentation = "https://docs.rs/debugit/"
 
 [dependencies]
