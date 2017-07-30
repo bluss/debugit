@@ -1,6 +1,6 @@
 [package]
 name = "debugit"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["bluss"]
 
 description = """Debug-print any value without trait bounds using specialization (Rust nightly channel)"""
