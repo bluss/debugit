@@ -22,6 +22,14 @@ __ https://docs.rs/debugit
 Recent Changes
 --------------
 
+- 0.1.2
+
+  - Use ``version_matches`` for version checking (compiles faster)
+
+- 0.1.1
+
+  - Edit docs
+  - Fix repository link
 
 License
 -------
