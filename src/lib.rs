@@ -85,6 +85,12 @@ mod tests {
 
     #[test]
     fn it_works() {
+        #[cfg(not(use_nightly))]
+        fn debug_no_bound<T>(x: T, _: &str) {
+            format!("{:?}", DebugIt(&x)); // assert it compiles, no particular output
+        }
+
+        #[cfg(use_nightly)]
         fn debug_no_bound<T>(x: T, s: &str) {
             assert_eq!(&format!("{:?}", DebugIt(&x)), s);
         }
