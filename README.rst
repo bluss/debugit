@@ -3,9 +3,7 @@ debugit
 =======
 
 Debug-print any value without trait bounds using specialization (Rust nightly
-channel).
-
-Falls back to a useless, but still compiling version on the stable channel.
+channel). Requires Rust nightly.
 
 Please read the `API documentation here`__
 
@@ -13,14 +11,17 @@ __ https://docs.rs/debugit
 
 |build_status|_ |crates|_
 
-.. |build_status| image:: https://travis-ci.org/bluss/debugit.svg?branch=master
-.. _build_status: https://travis-ci.org/bluss/debugit
-
-.. |crates| image:: http://meritbadge.herokuapp.com/debugit
+.. |crates| image:: https://img.shields.io/crates/v/debugit.svg
+   :alt: debugit at crates.io
 .. _crates: https://crates.io/crates/debugit
 
 Recent Changes
 --------------
+
+- 0.2.0
+
+  - Make debugit nightly-only and require ``unsafe`` to call due
+    to soundness issues with specialization.
 
 - 0.1.2
 

@@ -1,13 +1,17 @@
-#![cfg_attr(use_nightly, feature(core_intrinsics, specialization))]
+#![feature(specialization)]
 
 //! Use debug printlns, without the trait bounds (using specialization to
 //! find the right impl anyway).
+//!
+//! **NOTE**: This uses experimental Rust features and is therefore
+//! by itself experimental and unstable, and has all the problems of
+//! `feature(specialization)`.
+//!
+//! For this reason, `unsafe` is required to use this feature unfortunately.
 //! 
 
 use std::fmt;
-
-#[cfg(use_nightly)]
-use std::intrinsics::type_name;
+use std::any::type_name;
 
 /// Print a message, and then each value's debug representation (if it has one)
 ///
@@ -19,7 +23,9 @@ use std::intrinsics::type_name;
 /// #[macro_use] extern crate debugit;
 ///
 /// fn process_something<T>(x: T) {
-///     debugit!("starting with", x);
+///     unsafe {
+///         debugit!("starting with", x);
+///     }
 /// }
 ///
 /// # fn main() { }
@@ -38,9 +44,7 @@ macro_rules! debugit {
 /// This type always implements `Debug`. Uses specialization to use
 /// the inner value's Debug (which it should basically always have).
 ///
-/// Otherwise, falls back to print something else.
-///
-/// On Rust stable, it always has to print something else.
+/// Otherwise, falls back to print the type name.
 ///
 /// # Examples
 ///
@@ -48,51 +52,60 @@ macro_rules! debugit {
 /// use debugit::DebugIt as D;
 ///
 /// fn process_something<T>(x: T) {
-///     println!("starting with {:?}", D(&x));
+///     unsafe {
+///         println!("starting with {:?}", D(&x));
+///     }
 /// }
 /// ```
 #[derive(Copy, Clone)]
-pub struct DebugIt<T>(pub T);
-
-#[cfg(not(use_nightly))]
-impl<T> fmt::Debug for DebugIt<T> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "<unknown>")
-    }
+pub struct DebugIt<T> {
+    value: T
 }
 
-#[cfg(use_nightly)]
+/// This type always implements `Debug`. Uses specialization to use
+/// the inner value's Debug (which it should basically always have).
+///
+/// Otherwise, falls back to print the type name.
+///
+/// # Examples
+///
+/// ```
+/// use debugit::DebugIt as D;
+///
+/// fn process_something<T>(x: T) {
+///     unsafe {
+///         println!("starting with {:?}", D(&x));
+///     }
+/// }
+/// ```
+pub unsafe fn DebugIt<T>(value: T) -> DebugIt<T> {
+    DebugIt { value }
+}
+
 impl<T> fmt::Debug for DebugIt<T> {
     default fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        unsafe {
-            write!(f, "`{}`", type_name::<T>())
-        }
+        write!(f, "`{}`", type_name::<T>())
     }
 }
 
-#[cfg(use_nightly)]
 impl<T> fmt::Debug for DebugIt<T>
     where T: fmt::Debug
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.0.fmt(f)
+        self.value.fmt(f)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use ::DebugIt;
+    use crate::DebugIt;
 
     #[test]
     fn it_works() {
-        #[cfg(not(use_nightly))]
-        fn debug_no_bound<T>(x: T, _: &str) {
-            format!("{:?}", DebugIt(&x)); // assert it compiles, no particular output
-        }
-
-        #[cfg(use_nightly)]
         fn debug_no_bound<T>(x: T, s: &str) {
-            assert_eq!(&format!("{:?}", DebugIt(&x)), s);
+            unsafe {
+                assert_eq!(&format!("{:?}", DebugIt(&x)), s);
+            }
         }
         debug_no_bound(1, "1");
         debug_no_bound((), "()");

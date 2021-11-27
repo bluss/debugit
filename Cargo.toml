@@ -1,16 +1,12 @@
 [package]
 name = "debugit"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["bluss"]
+edition = "2018"
 
 description = """Debug-print any value without trait bounds using specialization (Rust nightly channel)"""
-license = "Apache-2.0/MIT"
+license = "Apache-2.0 OR MIT"
 documentation = "https://docs.rs/debugit/"
 repository = "https://github.com/bluss/debugit"
-
-build = "build.rs"
-
-[build-dependencies]
-version_check = "0.1"
 
 [dependencies]
